@@ -1,10 +1,10 @@
-
 commands = [
     "command -x --output result.txt --input input.txt",
     "command -v --verbose --output output.log",
     "command --example --input data.txt --output result.csv",
     "command --verbose --input file.txt",
-    "command -x --verbose --output log.txt"
+    "command -x -v --verbose --output log.txt",
+    "command --path 'C:\my folder\'"
 ]
 
 
@@ -25,16 +25,8 @@ def parse_args(data):
                 else:
                     flags.append(f'[{data[i]}]')
 
+    return cmd,flags
 
-
-                
-            
-
-
-
-
-
-    print(cmd,flags)
-
-
-parse_args(test)
+for command in commands:
+    cmd,flags = parse_args(command)
+    print({cmd:flags})
