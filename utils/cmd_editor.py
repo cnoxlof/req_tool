@@ -1,12 +1,11 @@
 commands = {}
 
-def add_command(name, params=[]):
-    commands[name] = params
+def add_command(name, params=[], help_text=""):
+    commands[name] = {"data": {"help" : help_text}, "params": params}
 
 
 
 def get_command():
-    print(commands)
     return commands
 
 
@@ -28,6 +27,6 @@ def add_param(command_name  ,param_name, param_type=str, required=False, help_te
     }
     if command_name not in commands:
         commands[command_name] = []
-    commands[command_name].append(param)
+    commands[command_name]["params"].append(param)
 
 
