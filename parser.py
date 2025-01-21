@@ -1,50 +1,23 @@
+from utils.logging import error_log, success_log
+from utils.cmd_editor import add_command, add_param, get_command
+from commands import main_cmd
 
-commands = {}
-
-def add_command(name, params=[]):
-    commands[name] = params
-
-
-
-
-
-
-
-
-
-
-
-def add_param(command_name  ,param_name, param_type=str, required=False, help_text="", default=None, choices=None):
-    param = {
-        "name": param_name,
-        "type": param_type,
-        "required": required,
-        "help": help_text,
-        "default": default,
-        "choices": choices
-    }
-    if command_name not in commands:
-        commands[command_name] = []
-    commands[command_name].append(param)
 
 # Adding a command with parameters
+
+add_command('help', [])
+add_command('exit', [])
+
+add_command('cls', [])
+add_command('clear', [])
+
 add_command('start', [])
 add_param('start', '--timeout', param_type=int, required=True, help_text="The timeout value in seconds", default=30)
 add_param('start', '--verbose', param_type=bool, required=True, help_text="Enable verbose output", default=False)
 add_param('start', '--mode', param_type=str, required=False, help_text="Mode of operation", choices=["fast", "normal", "slow"])
 
 
-
-
-
-def error_log(text):
-    print('\033[31;40;1mError :\033[39;49;0m ' + text)
-    
-def warning_log(text):
-    print('\033[33;40;1mWarning :\033[39;49;0m ' + text)
-    
-def succes_log(text):
-    print('\033[32;40;1mSucces :\033[39;49;0m ' + text)
+commands = get_command()
 
 
 
@@ -54,37 +27,74 @@ def command_exists(data):
 
 
 def parse_command(data):
-    data = data.split(' ')
+    data = data.split(' ') # Split the data into a list
+    data = list(filter(None, data)) # Remove empty spaces
+
     command = data[0]
 
-    paramCheck = []
+    requiredParams = []
 
-    for i in range(len(commands[command])):
-        param = commands[command][i]
-   
-
-
+    # Check if the command exists and if it has required parameters
+    for param in commands[command]:
         if param['required']:
             if param['name'] in data:
-                paramCheck.append(param['name'])
-                
-                
-
+                requiredParams.append(param['name'])
             else:
-                return error_log(f'A parameter is missing {param['name']}')
+                return error_log(f'A parameter is missing {param["name"]}')
+            
+    # Check if all the parameters are valid
+    for param in data:
+        if param[0] == '-':
+            if param not in [param['name'] for param in commands[command]]:
+                return error_log(f'Invalid Parameter {param}')
 
-
-
-
-    for i in range(len(commands[command])):
-        if commands[command][i]["required"]:
-            if not commands[command][i]['name'] in paramCheck:
-                return f'A Paremeter is missing {commands[command][i]["name"]}'    
-
-    succes_log('Everything Worked')
-
+    # Check if the required parameters are present
+    for param in commands[command]:
+        if param['required'] and param['name'] not in requiredParams:
+            return error_log(f'A parameter is missing {param["name"]}')
         
-    # if param['type'] != None:
-    #     return f'Starting with {param['name']} = {data[data.index(param['name'])+1]}'
-    # else:
-    #     return f'No Parameter Value is Needed'
+    # Check if the parameters have values
+    for param in commands[command]:
+        if param['name'] in data:
+            try:
+                if data[data.index(param['name'])+1] == '':
+                    return error_log(f'No Value for {param["name"]}')
+            except IndexError:
+                return error_log(f'No Value for {param["name"]}')
+        else:
+            if param['required']:
+                return error_log(f'A parameter is missing {param["name"]}')
+
+    # Check if the parameters have the correct types
+    
+    for param in commands[command]:
+        if param['name'] in data:
+            try:
+                if param['type'] == int:
+                    int(data[data.index(param['name'])+1])
+                elif param['type'] == bool:
+                    if data[data.index(param['name'])+1] not in ['True', 'False']:
+                        return error_log(f'Invalid Value for {param["name"]}')
+                elif param['type'] == str:
+                    pass
+                else:
+                    return error_log(f'Invalid Type for {param["name"]}')
+            except ValueError:
+                return error_log(f'Invalid Value for {param["name"]}')
+        else:
+            if param['required']:
+                return error_log(f'A parameter is missing {param["name"]}')
+
+
+    # Check if the parameters have the correct choices
+
+    for param in commands[command]:
+        if param['name'] in data:
+            if param['choices'] != None:
+                if data[data.index(param['name'])+1] not in param['choices']:
+                    return error_log(f'Invalid Value for {param["name"]}, Expected values are {param["choices"]}')
+        else:
+            if param['required']:
+                return error_log(f'A parameter is missing {param["name"]}')
+
+    main_cmd(data)
