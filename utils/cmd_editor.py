@@ -9,7 +9,14 @@ def get_command():
     return commands
 
 
-
+def add_sub_comand(name, sub_name, params=[], help_text=""):
+    if name not in commands:
+           commands[name] = {"data": {"help" : help_text}, "params": params}
+    
+    if "sub_commands" not in commands[name]:
+        commands[name]["sub_commands"] = {}
+        commands[name]["sub_commands"][sub_name] = sub_name
+    
 
 
 

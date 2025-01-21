@@ -1,38 +1,47 @@
 from utils.logging import error_log, success_log
-from utils.cmd_editor import add_command, add_param, get_command
-from commands import main_cmd
+from utils.cmd_editor import get_command
+
+from commands.cmds_sys import main_cmd
 
 
-# Adding a command with parameters
-
-add_command('help', help_text="Display help for commands")
-add_command('exit', help_text="Exit the program")
-
-add_command('cls', help_text="Clear the screen")
-add_command('clear', help_text="Clear the screen")
-
-add_command('start', [], help_text="Start the program")
-add_param('start', '--timeout', param_type=int, required=True, help_text="The timeout value in seconds", default=30)
-add_param('start', '--verbose', param_type=bool, required=True, help_text="Enable verbose output", default=False)
-add_param('start', '--mode', param_type=str, required=False, help_text="Mode of operation", choices=["fast", "normal", "slow"])
 
 
-commands = get_command()
+
+
+
+
 
 
 
 def command_exists(data):
+    commands = get_command()
     return data.split(' ')[0] in commands
 
 
 
 def parse_command(data):
+    commands = get_command()
+    
     data = data.split(' ') # Split the data into a list
     data = list(filter(None, data)) # Remove empty spaces
 
     command = data[0]
 
     requiredParams = []
+
+    # Check if the command have the right subcommand  
+    if command in commands:
+        print('sub_commands' in commands[command])
+        if 'sub_commands' in commands[command]:
+            if len(data) >= 2:
+                if data[1] not in commands[command]['sub_commands']:
+                    return error_log(f'Invalid Subcommand {data[1]}')
+            else:
+                return error_log(f'A subcommand is missing')
+    else:
+        return error_log(f'Invalid Command {command}')
+
+
 
     # Check if the command exists and if it has required parameters
     if len(commands[command]['params'])>=1:
@@ -77,13 +86,13 @@ def parse_command(data):
                     int(data[data.index(param['name'])+1])
                 elif param['type'] == bool:
                     if data[data.index(param['name'])+1] not in ['True', 'False']:
-                        return error_log(f'Invalid Value for {param["name"]}')
+                        return error_log(f'Invalid Value for {param["name"]}, expected types {param["type"]}') 
                 elif param['type'] == str:
                     pass
                 else:
-                    return error_log(f'Invalid Type for {param["name"]}')
+                    return error_log(f'Invalid Value for {param["name"]}, expected types {param["type"]}')
             except ValueError:
-                return error_log(f'Invalid Value for {param["name"]}')
+                return error_log(f'Invalid Value for {param["name"]}, expected types {param["type"]}')
         else:
             if param['required']:
                 return error_log(f'A parameter is missing {param["name"]}')

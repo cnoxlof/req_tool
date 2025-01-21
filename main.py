@@ -1,10 +1,7 @@
 from parser import parse_command, command_exists
+from commands.cmds_init import cmds_init
 
 
-
-def clear():
-    print("\033[H\033[J", end="")
-    draw_logo()
     
 
 
@@ -13,6 +10,7 @@ def draw_logo():
         print(file.read(), end="\n\n")
 
 
+cmds_init()
 draw_logo()
 run = True
 
