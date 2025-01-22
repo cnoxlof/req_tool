@@ -49,12 +49,15 @@ def main():
     for i in range(len(example_commands)):
         main_command, sub_command, flags, arguments = parse_command(example_commands[i])
 
-        print(f'Command: {example_commands[i]}')
-        print(f"Main Command: {main_command}")
-        print(f"Sub Command: {sub_command}")
-        print(f'Flags: {flags}')
-        print(f'Arguments: {arguments}')
-        print("\n\n")
+
+
+        # print(f'Command: {example_commands[i]}')
+        # print(f"Main Command: {main_command}")
+        # print(f"Sub Command: {sub_command}")
+        # print(f'Flags: {flags}')
+        # print(f'Arguments: {arguments}')
+        # print("\n")
+        print([main_command,sub_command,flags,arguments])
     
             
     
