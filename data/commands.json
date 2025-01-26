@@ -1,0 +1,44 @@
+{
+    "monitor": {
+        "description": "Monitor system metrics or tool usage in real-time.",
+        "flags": {
+            "--interval": {
+                "description": "Set the update interval in seconds",
+                "type": "integer"
+            },
+            "--log": {
+                "description": "Save the monitoring output to a file",
+                "type": "string"
+            },
+            "--verbose": {
+                "description": "Display detailed metrics",
+                "type": "boolean"
+            }
+        },
+        "arguments": [
+            "target"
+        ],
+        "subself.commands": {
+            "test": {
+                "description": "Test the integrity of the monitor command",
+                "flags": {
+                    "--interval": {
+                        "description": "Set the update interval in seconds",
+                        "type": "integer"
+                    },
+                    "--log": {
+                        "description": "Save the monitoring output to a file",
+                        "type": "string"
+                    },
+                    "--verbose": {
+                        "description": "Display detailed metrics",
+                        "type": "boolean"
+                    }
+                },
+                "arguments": [
+                    "target"
+                ]
+            }
+        }
+    }
+}
