@@ -31,7 +31,7 @@ class CommandManager:
         self.commands = {}
         self.ready = False
         
-    def init(self):
+    def load_commands(self):
         self.add_command("monitor","Monitor system metrics or tool usage in real-time.")
 
         self.add_argument_to_command('monitor', 'target')
@@ -47,7 +47,7 @@ class CommandManager:
         self.add_flag_to_sub_command('monitor', 'test', '--interval', 'Set the update interval in seconds', 'integer')
         self.add_flag_to_sub_command('monitor','test', '--log', 'Save the monitoring output to a file', 'string')
         self.add_flag_to_sub_command('monitor', 'test','--verbose', 'Display detailed metrics', 'boolean')
-
+        
         self.save_commands()
         
         self.ready = True
@@ -64,7 +64,7 @@ class CommandManager:
         if command_name in self.commands:
             print(f'command {command_name} already exist')
             return
-        self.commands[command_name] = {'description': command_description, 'flags': {}, 'arguments' : [],'subself.commands' : {}}
+        self.commands[command_name] = {'description': command_description, 'flags': {}, 'arguments' : [],'subcommands' : {}}
 
 
 
@@ -101,8 +101,8 @@ class CommandManager:
 
     def add_sub_command_to_command(self,command_name, sub_command_name, sub_command_description):
         try:
-            if not command_name in self.commands[command_name]['subself.commands']:
-                self.commands[command_name]['subself.commands'][sub_command_name] = {'description': sub_command_description, 'flags': {},'arguments': []}
+            if not command_name in self.commands[command_name]['subcommands']:
+                self.commands[command_name]['subcommands'][sub_command_name] = {'description': sub_command_description, 'flags': {},'arguments': []}
             else:
                 print(f'subcommand {sub_command_name} already exist')
         except KeyError as e:
@@ -114,7 +114,7 @@ class CommandManager:
 
     def add_flag_to_sub_command(self,command_name, sub_command_name,flag_name,flag_description, flag_type):
         try:
-            subcommand = self.commands[command_name]['subself.commands'][sub_command_name]
+            subcommand = self.commands[command_name]['subcommands'][sub_command_name]
             subcommand['flags'][flag_name] = {"description": flag_description, "type": flag_type} 
         except KeyError as e:
             print(f"{e.args[0]} not found")
@@ -122,10 +122,8 @@ class CommandManager:
 
     def add_argument_to_sub_command(self,command_name, sub_command_name, argument_name):
         try:
-            subcommand = self.commands[command_name]['subself.commands'][sub_command_name]
+            subcommand = self.commands[command_name]['subcommands'][sub_command_name]
             subcommand['arguments'].append(argument_name)
         except KeyError as e:
             print(f"{e.args[0]} not found")
-        
-        
         

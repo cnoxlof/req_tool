@@ -1,5 +1,6 @@
 from command_manager import CommandManager
-
+from command_parser import CommandParser
+from utils.debugs_logs import *
 
 RUN = True
 
@@ -12,24 +13,44 @@ def draw_logo():
         
         
 def main():
+    debug("This is a development version and is currently in debug mode.")
+    
+    
     commandManager = CommandManager()
-    commandManager.init()
+    commandManager.load_commands()
+    
+    
     
     if commandManager.ready:
-        print("Command Manager Ready")
+        success("Command Manager Ready")
+
     else:
-        print("\x1b[31;1mError : \x1b[39;49;0mCommand Manager not ready")
+        error("Command Manager not ready")
         return
-        
+    
+    commandParser = CommandParser()
+    
+    if commandParser.ready:
+        success("Command Manager Ready")
+    else:
+        error("Command Manager not ready")
+        return
+    
+
+    
     
     input('press enter to continue')
+    
     print("\033[H\033[J", end="")
-    
-    
+    draw_logo()
     
     while RUN:
-        draw_logo()
-        input('> ')
+        
+        data = input('> ')
+        
+        print(commandParser.parse_command(data))
+        
+        
         
         
 if __name__ == "__main__":

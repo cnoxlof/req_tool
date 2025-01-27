@@ -18,7 +18,7 @@
         "arguments": [
             "target"
         ],
-        "subself.commands": {
+        "subcommands": {
             "test": {
                 "description": "Test the integrity of the monitor command",
                 "flags": {
